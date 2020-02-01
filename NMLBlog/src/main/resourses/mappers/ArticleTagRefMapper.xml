@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ycw.ssm.blog.mapper.ArticleTagRefMapper">
+
+    <select id="tagListByArticleId" parameterType="Integer" resultType="com.ycw.ssm.blog.entity.Tag">
+        SELECT tag.*
+        from tag, article_tag_ref
+        WHERE article_tag_ref.article_id = #{articleId}
+              AND article_tag_ref.tag_id = tag.tag_id
+    </select>
+
+    <select id="findArticleCountByTagId" parameterType="Integer" resultType="Integer">
+        SELECT count(*) from article_tag_ref WHERE article_tag_ref.tag_id = #{tagId}
+    </select>
+
+    <insert id="insert" parameterType="com.ycw.ssm.blog.entity.ArticleTagRef">
+        INSERT INTO article_tag_ref (article_tag_ref.article_id, article_tag_ref.tag_id)
+        VALUES(#{articleId}, #{tagId})
+    </insert>
+
+    <select id="deleteByArticleId" parameterType="Integer">
+        DELETE FROM article_tag_ref WHERE article_id = #{articleId}
+    </select>
+
+    <select id="listArticleByTagId" parameterType="integer" resultType="article">
+        SELECT article.* from article WHERE article_id in (
+		    SELECT article_id FROM article_tag_ref WHERE article_tag_ref.tag_id = #{tagId}
+        )
+    </select>
+</mapper>

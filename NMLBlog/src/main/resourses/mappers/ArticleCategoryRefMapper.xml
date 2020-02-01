@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ycw.ssm.blog.mapper.ArticleCategoryRefMapper">
+
+    <select id="categoryListByArticleId" parameterType="Integer" resultType="com.ycw.ssm.blog.entity.Category">
+        SELECT category.category_id, category.category_name
+        from category, article_category_ref
+        WHERE article_category_ref.article_id = #{articleId}
+              AND article_category_ref.category_id = category.category_id
+    </select>
+
+    <select id="categoryIdsByArticleId" parameterType="Integer" resultType="Integer">
+        SELECT article_category_ref.category_id
+        from article_category_ref
+        where article_category_ref.article_id = #{articleId}
+    </select>
+
+    <select id="listArticleByCategoryIds" parameterType="Integer" resultType="Article">
+        SELECT article.* from article, article_category_ref
+         <where>
+             article.article_status = 1
+             AND article.article_id = article_category_ref.article_id
+             <if test="categoryIds != null">
+                 AND article_category_ref.category_id in
+                 <foreach collection="categoryIds" open="(" close=")" separator="," item="id">
+                     #{id}
+                 </foreach>
+             </if>
+         </where>
+        limit #{limit}
+    </select>
+
+    <select id="getArticleCountByCategoryId" parameterType="Integer">
+        SELECT count(DISTINCT(article_id)) from article_category_ref WHERE category_id = #{categoryId}
+    </select>
+
+    <insert id="insert" parameterType="com.ycw.ssm.blog.entity.ArticleCategoryRef">
+        INSERT INTO article_category_ref (article_category_ref.article_id, article_category_ref.category_id)
+        VALUES(#{articleId}, #{categoryId})
+    </insert>
+
+    <delete id="deleteByArticleId" parameterType="Integer">
+        DELETE FROM article_category_ref WHERE article_id = #{articleId}
+    </delete>
+
+    <select id="listArticleBycategoryId" parameterType="Integer" resultType="article">
+        SELECT article.* from article WHERE article_id in (
+		    SELECT article_id FROM article_category_ref WHERE article_category_ref.category_id = #{categoryId}
+        )
+    </select>
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ycw.ssm.blog.mapper.MenuMapper">
+
+    <select id="listMenu" resultType="menu">
+        SELECT * FROM menu ORDER by menu_order DESC , menu_id
+    </select>
+
+    <insert id="insert" parameterType="menu">
+        INSERT INTO menu(menu.menu_name, menu.menu_url, menu.menu_icon, menu.menu_level, menu.menu_order)
+        VALUES(#{menuName}, #{menuUrl}, #{menuIcon}, #{menuLevel}, #{menuOrder})
+    </insert>
+
+    <select id="getMenuById" parameterType="Integer" resultType="menu">
+        SELECT * from menu where menu_id = #{menuId}
+    </select>
+
+    <update id="update" parameterType="menu">
+        UPDATE menu
+        set menu.menu_name = #{menuName}, menu.menu_url = #{menuUrl}, menu.menu_icon = #{menuIcon}, menu.menu_level = #{menuLevel}, menu.menu_order = #{menuOrder}
+        WHERE menu.menu_id = #{menuId}
+    </update>
+
+</mapper>

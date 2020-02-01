@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ycw.ssm.blog.mapper.LinkMapper">
+
+    <select id="findAll" parameterType="Integer" resultType="Link">
+        SELECT DISTINCT * FROM link
+        <where>
+            <if test="linkStatus != null">
+                link.link_status = #{linkStatus} AND
+            </if>
+            1=1
+        </where>
+        ORDER BY link_order DESC , link_id
+    </select>
+
+    <select id="getLinkById" parameterType="Integer" resultType="link">
+        SELECT * from link WHERE link_id = #{linkId}
+    </select>
+
+    <update id="update" parameterType="Link">
+        UPDATE link
+        SET link_name = #{linkName}, link_url = #{linkUrl}, link_owner_contact = #{linkOwnerContact}, link_description = #{linkDescription}, link_order = #{linkOrder}, link_status = #{linkStatus}, link_update_time = #{linkUpdateTime}
+        WHERE link_id = #{linkId}
+    </update>
+
+    <insert id="insertLink" parameterType="link">
+        INSERT into link(link_name, link_url, link_description, link_order, link_owner_contact, link_create_time, link_update_time, link_status, link_owner_nickname)
+        VALUES(#{linkName}, #{linkUrl}, #{linkDescription}, #{linkOrder}, #{linkOwnerContact}, #{linkCreateTime}, #{linkUpdateTime}, #{linkStatus}, #{linkOwnerNickname})
+    </insert>
+
+    <delete id="deleteById" parameterType="Integer">
+        DELETE from link where link_id = #{linkId}
+    </delete>
+
+    <select id="getLinkCount" resultType="Integer">
+        SELECT COUNT(*) FROM link
+    </select>
+
+</mapper>

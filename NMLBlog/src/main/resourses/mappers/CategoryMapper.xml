@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ycw.ssm.blog.mapper.CategoryMapper">
+
+    <select id="findAll" resultType="Category">
+        SELECT DISTINCT * FROM category;
+    </select>
+
+    <insert id="insertCategory" parameterType="Category">
+        INSERT into category(category_name, category_pid, category_description, category_icon)
+        VALUES(#{categoryName}, #{categoryPid}, #{categoryDescription}, #{categoryIcon})
+    </insert>
+
+    <select id="getCategoryById" parameterType="Integer" resultType="category">
+        SELECT * from category WHERE category_id = #{categoryId}
+    </select>
+
+    <update id="update" parameterType="category">
+        UPDATE category
+        SET category_name = #{categoryName}, category_pid = #{categoryPid}, category_description = #{categoryDescription}, category_icon = #{categoryIcon}
+        WHERE category_id = #{categoryId};
+    </update>
+
+    <select id="getCategoryCount" resultType="Integer">
+        SELECT COUNT(*) FROM category
+    </select>
+
+</mapper>

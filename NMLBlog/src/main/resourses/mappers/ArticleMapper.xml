@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ycw.ssm.blog.mapper.ArticleMapper">
+
+    <select id="totalByUserId" parameterType="Integer" resultType="Integer">
+      SELECT count(*) FROM article WHERE article_user_id = #{userId};
+    </select>
+
+    <select id="findAll" parameterType="Map" resultType="article">
+        SELECT * from article
+        <where>
+            <if test="status != null">
+                article_status = #{status} AND
+            </if>
+            <if test="articleId != null">
+                article_id = #{articleId} AND
+            </if>
+            <if test="keywords != null">
+                article_title LIKE concat(concat("%" + #{keywords}) + "%") AND
+            </if>
+            1 = 1
+        </where>
+        ORDER BY article_order DESC , article_id DESC
+    </select>
+
+    <select id="selectArticleByArticleId" parameterType="Integer" resultType="Article">
+        SELECT * from article where article.article_id = #{articleId} AND article.article_status = #{status};
+    </select>
+
+    <select id="selectByArticleId" parameterType="Integer" resultType="Article">
+        SELECT * from article where article.article_id = #{articleId};
+    </select>
+
+    <select id="findArticlesByViewCount" parameterType="Integer" resultType="Article">
+        SELECT * from article ORDER BY article.article_view_count DESC LIMIT #{limit}
+    </select>
+
+    <!--根据 id 获取上一篇文章-->
+    <select id="findPreArticle" parameterType="Integer" resultType="Article">
+        SELECT * from article
+        <where>
+            article.article_id &lt; #{articleId}
+            AND article.article_status = 1
+        </where>
+        ORDER BY article.article_id DESC LIMIT 1
+    </select>
+
+    <!--根据 id 获取下一篇文章-->
+    <select id="findAfterArticle" parameterType="Integer" resultType="Article">
+        SELECT * from article
+        <where>
+            <if test="articleId != null">
+                article.article_id &gt; #{articleId}
+            </if>
+        </where>
+        ORDER BY article.article_id LIMIT 1
+    </select>
+
+    <!--获取评论最多的文章-->
+    <select id="findArticlesByCommentCount" parameterType="Integer" resultType="Article">
+        SELECT * from article ORDER BY article.article_comment_count DESC LIMIT #{limit}
+    </select>
+
+    <insert id="insert" parameterType="Article" useGeneratedKeys="true" keyProperty="articleId">
+        INSERT INTO article (article.article_title, article.article_content, article.article_status, article.article_comment_count, article.article_like_count,
+        article.article_create_time, article.article_order, article.article_update_time,article.article_is_comment, article.article_view_count, article_user_id)
+        VALUES(#{articleTitle}, #{articleContent}, #{articleStatus}, #{articleCommentCount}, #{articleLikeCount}, #{articleCreateTime}, #{articleOrder},
+        #{articleUpdateTime}, #{articleIsComment}, #{articleViewCount}, #{articleUserId})
+    </insert>
+
+    <select id="listLatestArticle" resultType="article">
+        SELECT * FROM article ORDER BY article.article_create_time DESC
+    </select>
+
+    <update id="update" parameterType="article">
+        UPDATE article
+        SET article_title = #{articleTitle}, article_content = #{articleContent}, article_order = #{articleOrder},
+        article_status = #{articleStatus}, article_update_time = #{articleUpdateTime}, article_view_count = #{articleViewCount},
+        article_comment_count = #{articleCommentCount}
+        WHERE article_id = #{articleId}
+    </update>
+
+    <delete id="deleteById" parameterType="integer">
+        DELETE * from article WHERE article_id = #{articleId}
+    </delete>
+
+    <select id="getArticleCount" resultType="Integer">
+        SELECT COUNT(*) FROM article
+    </select>
+
+    <select id="countArticleView" resultType="Integer">
+        SELECT sum(article_view_count) from article
+        WHERE article_status = 1
+    </select>
+
+    <select id="getRandomArticleList" parameterType="Integer" resultType="article">
+        SELECT * from article ORDER BY RAND() LIMIT #{limit}
+    </select>
+
+    <select id="listArticleWithoutContent" resultType="article">
+        SELECT article.article_id, article.article_create_time, article.article_title FROM article WHERE article.article_status = 1
+    </select>
+</mapper>

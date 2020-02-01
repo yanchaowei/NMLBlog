@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ycw.ssm.blog.mapper.CommentMapper">
+
+    <!--根据 articleId 查询相关的评论-->
+    <select id="findCommentsByArticleId" parameterType="Integer" resultType="comment">
+        SELECT `comment`.* from comment where `comment`.comment_article_id = #{articleId}
+    </select>
+
+    <select id="listComment" resultType="comment">
+        SELECT * from comment
+    </select>
+
+    <select id="getCommentById" parameterType="Integer" resultType="comment">
+        SELECT * from comment where comment_id = #{commentId}
+    </select>
+
+    <update id="update" parameterType="comment">
+        UPDATE `comment`
+         SET `comment`.comment_author_name = #{commentAuthorName}, `comment`.comment_author_email = #{commentAuthorEmail}, `comment`.comment_author_url = #{commentAuthorUrl}, `comment`.comment_content = #{commentContent}
+         WHERE `comment`.comment_id = #{commentId}
+    </update>
+
+    <delete id="deleteById" parameterType="Integer">
+        DELETE from comment where comment_id = #{commentId};
+    </delete>
+
+    <select id="getRecentComments" resultType="comment">
+        SELECT * from `comment` ORDER BY `comment`.comment_create_time DESC limit 5
+    </select>
+
+    <select id="getCommentCount" resultType="Integer">
+        SELECT COUNT(*) FROM comment
+    </select>
+
+    <insert id="insert" parameterType="comment">
+        INSERT INTO `comment`(`comment`.comment_article_id, `comment`.comment_author_avatar, `comment`.comment_author_email, `comment`.comment_author_name,
+        `comment`.comment_author_url, `comment`.comment_content, `comment`.comment_create_time, `comment`.comment_ip, `comment`.comment_pid, `comment`.comment_pname,
+        `comment`.comment_role)
+        VALUES(#{commentArticleId}, #{commentAuthorAvatar}, #{commentAuthorEmail}, #{commentAuthorName}, #{commentAuthorUrl}, #{commentContent}, #{commentCreateTime},
+         #{commentIp}, #{commentPid}, #{commentPname}, #{commentRole})
+    </insert>
+</mapper>
